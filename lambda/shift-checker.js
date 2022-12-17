@@ -1,106 +1,52 @@
-const getShiftCheckPrefix = (whenId) => {
-    if (whenId === 'now') {
-        return '今の';
+const getShift = async (whenId, shortDescription = false) => {
+    if (whenId !== 'now' && whenId !== 'next') {
+        throw(`whenIdが不正です ${whenId}`)
     }
 
-    if (whenId === 'next') {
-        return '次の';
+    const axios = require('axios');
+
+    const url = `https://spla3.yuu26.com/api/coop-grouping/${whenId}`;
+    const response = await axios.get(url)
+
+    if (response.status >= 300) {
+        throw(`スプラ3APIエラー ステータス${response.status}`);
     }
 
-    return '';
+    const stage = response.data.results[0].stage.name;
+    const weapons = response.data.results[0].weapons;
+    const from_date = new Date(response.data.results[0].start_time);
+    const to_date = new Date(response.data.results[0].end_time);
+    
+    if (!stage) {
+        throw('ステージ情報取得失敗')
+    }
+    if (!weapons) {
+        throw('ブキ情報取得失敗')
+    }
+    
+    const from_word = `${from_date.getDate()}日${from_date.getHours()}時から`;
+    const to_word = `${to_date.getDate()}日${to_date.getHours()}時まで`;
+
+    let description = '';
+    switch (whenId) {
+        case 'now':
+            description = `今のシフトは${to_word}${stage}。`;
+            break;
+        case 'next':
+            description = shortDescription ?
+                `次は${stage}。` :
+                `次のシフトは${from_word}${stage}。`;
+            break;
+    }
+
+    if (weapons[0].name === 'ランダム') {
+        description += 'ブキはランダムです。';
+    } else {
+        const weapon_names = weapons.map(item => item["name"])
+        description += 'ブキは'+ weapon_names.join('、') +'です。';
+    }
+
+    return description;
 }
 
-const getShift = (whenId) => {
-    const http = require('https');
-    var url = `https://spla3.yuu26.com/api/coop-grouping/${whenId}`;
-
-    const options = {
-        headers: {
-            'User-Agent': 'AWS laambda(twitter@calpo22)',
-        }
-    };
-
-    http.get(url, options, (res) => {
-        if (res.statusCode !== 200) {
-            throw (`スプラ3APIエラー ステータス ${res.statusCode}`);
-        }
-
-        res.setEncoding('utf8');
-
-        let response_body = '';
-        res.on('data', (chunk) => {
-            response_body += chunk;
-        }
-        ).on('end', () => {
-            const data = JSON.parse(response_body);
-            if (!data) {
-                throw (`スプラ3APIエラー JSON取得失敗`);
-            }
-
-            const shift = data.results[0];
-
-
-            const info = {
-                'term': '',
-            };
-            switch (whenId) {
-                case 'now':
-                    info.term = 'まで';
-                    break;
-                case 'next':
-                    info.term = 'から';
-                    break;
-            }
-
-            console.log(info)
-            return;
-
-            // objectにパースして
-            var parsedValue = JSON.parse(events);
-            var key1 = "results";
-            const results = parsedValue[key1];
-            // 必要なところを取ってきて文字列にする
-            switch (wTypeStr) {
-                case 'next':
-                case 'now':
-                    // 現在と次回のときは1つしか呼ばれない
-                    results.forEach(element => {
-                        const rule = element.rule.name;
-                        const stages = element.stages;
-                        const stage1 = stages[0].name;
-                        const stage2 = stages[1].name;
-                        const startTime = element.start_time;
-                        const date = new Date(startTime);
-                        var startTimeStr = (parseInt(date.getHours()) + 9) % 24;
-                        strResponse = startTimeStr + '時からの' + bTypeStr + 'のルールは' + rule + 'で、ステージは' + stage1 + 'と' + stage2 + 'です';
-                        console.log('USER_LOG: ' + strResponse);
-                    });
-                    break;
-                case 'schedule':
-                default:
-                    // 現在と次回を指定しない場合は最大12個のスケジュールが取得される（多すぎるので3個目までしか出力しない）
-                    var addStr = '';
-                    for (let i = 0; i < 3 && i < results.length; i++) {
-                        var element = results[i];
-                        const rule = element.rule.name;
-                        const stages = element.stages;
-                        const stage1 = stages[0].name;
-                        const stage2 = stages[1].name;
-                        const startTime = element.start_time;
-                        const date = new Date(startTime);
-                        var startTimeStr = (parseInt(date.getHours()) + 9) % 24;
-                        addStr += startTimeStr + '時からの' + bTypeStr + 'のルールは' + rule + 'で、ステージは' + stage1 + 'と' + stage2 + 'です。';
-                        console.log('USER_LOG: ' + addStr);
-                    }
-                    // strResponseの内容でawaitして監視しているのでまとめ入れる
-                    strResponse = addStr;
-                    break;
-            }
-        });
-    }).on('error', (e) => {
-        this.emit(':tell', 'エラーです' + e.message);
-    });
-}
-
-exports.getShiftCheckPrefix = getShiftCheckPrefix;
 exports.getShift = getShift;
