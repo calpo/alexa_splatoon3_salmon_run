@@ -9,9 +9,8 @@
     "author": "calpo",
     "license": "Apache License",
     "dependencies": {
-        "ask-sdk-core": "*",
-        "ask-sdk-model": "*",
-        "aws-sdk": "*",
+        "ask-sdk-core": "^2.12.1",
+        "ask-sdk-model": "^1.39.0",
         "axios": "^1.2.1"
     }
 }
