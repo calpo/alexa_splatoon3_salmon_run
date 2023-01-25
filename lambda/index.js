@@ -50,7 +50,22 @@ const ShiftCheckIntentHandler = {
         
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+            .getResponse();
+    }
+};
+
+const EndingTimeCheckIntentHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'EndingTimeCheckIntent';
+    },
+    async handle(handlerInput) {
+        const shiftChecker = require('./shift-checker.js');
+        
+        let speakOutput = 'バイトの終了時刻をお知らせします';
+        
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
             .getResponse();
     }
 };
@@ -166,6 +181,7 @@ exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
         ShiftCheckIntentHandler,
+        EndingTimeCheckIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         FallbackIntentHandler,
