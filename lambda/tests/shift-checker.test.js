@@ -1,7 +1,15 @@
 const shiftChecker = require('../shift-checker')
+const axios = require('axios')
 
-test('今のバイトシフトを返す', () => {
-    expect(1).toBe(1);
+jest.mock('axios')
 
-    throw new Error('実装中')
+test('今のバイトシフトを返す', async () => {
+    axios.get.mockResolvedValue({
+        "status": 200,
+        "data": require('../../stub/json/coop-grouping.now.json')
+    })
+
+    speakOut = await shiftChecker.getShift('now')
+
+    expect(speakOut).toBe("今のシフトは12日、月曜9時までスメーシーワールド。ブキはランダムです。")
 })

@@ -45,7 +45,7 @@ const ShiftCheckIntentHandler = {
             speakOutput = await shiftChecker.getShift(whenId);
         } else {
             speakOutput = await shiftChecker.getShift('now');
-            speakOutput += await shiftChecker.getShift('next', true);
+            speakOutput += await shiftChecker.getShift('next');
         }
         
         return handlerInput.responseBuilder

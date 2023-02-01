@@ -1,6 +1,6 @@
 const dateUtil = require('./date-util.js');
 
-const getShift = async (whenId, shortDescription = false) => {
+const getShift = async (whenId) => {
     if (whenId !== 'now' && whenId !== 'next') {
         throw (`whenIdが不正です ${whenId}`)
     }
@@ -35,9 +35,7 @@ const getShift = async (whenId, shortDescription = false) => {
             description = `今のシフトは${to_word}${stage}。`;
             break;
         case 'next':
-            description = shortDescription ?
-                `次は${stage}。` :
-                `次のシフトは${from_word}${stage}。`;
+            description = `次のシフトは${from_word}${stage}。`;
             break;
     }
 
