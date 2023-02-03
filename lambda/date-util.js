@@ -17,5 +17,36 @@ const fakeToJst = (date) => {
     return new Date(date.getTime() + ((date.getTimezoneOffset() + (9 * 60)) * 60 * 1000));
 }
 
+const getRelativeDayName = (target, now = null) => {
+    now = now || new Date()
+
+    now = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+    )
+    target = new Date(
+        target.getFullYear(),
+        target.getMonth(),
+        target.getDate()
+    )
+
+    switch ((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) {
+        case 0:
+            return '今日'
+        case 1:
+            return '明日'
+        case 2:
+            return '明後日'
+        case -1:
+            return '昨日'
+        default:
+            return target.getDate() + '日'
+    }
+
+    return '今日'
+}
+
 exports.getDayName = getDayName
 exports.fakeToJst = fakeToJst
+exports.getRelativeDayName = getRelativeDayName
