@@ -62,7 +62,7 @@ const EndingTimeCheckIntentHandler = {
     async handle(handlerInput) {
         const shiftChecker = require('./shift-checker.js');
         
-        let speakOutput = 'バイトの終了時刻をお知らせします';
+        let speakOutput = await shiftChecker.getEndingTime();
         
         return handlerInput.responseBuilder
             .speak(speakOutput)
