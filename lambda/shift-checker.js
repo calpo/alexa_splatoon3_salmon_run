@@ -69,7 +69,7 @@ const getShift = async (whenId) => {
 const getEndingTime = async () => {
     const shift = await getShiftDetail('now')
 
-    const description = `${shift.stage}のシフトは${shift.to_relative}までです。`;
+    const description = `${shift.stage}のシフトは${shift.to_relative}です。`;
 
     return description;
 }

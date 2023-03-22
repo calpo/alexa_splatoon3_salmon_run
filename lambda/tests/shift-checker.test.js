@@ -22,5 +22,5 @@ test('今のバイトシフト終了時刻を返す', async () => {
 
     speakOut = await shiftChecker.getEndingTime()
 
-    expect(speakOut).toBe("スメーシーワールドのシフトは12日、9時までまでです。")
+    expect(speakOut).toBe("スメーシーワールドのシフトは12日、9時までです。")
 })
